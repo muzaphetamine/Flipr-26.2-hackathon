@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="output.css">
+  <title>Stocker</title>
+  <style>
+    .search-group input { padding: 0.5rem; border: 1px solid #68D391; background-color: #4a5568; color: white; border-radius: 0.375rem; }
+    .search-group button { padding: 0.5rem 1rem; background-color: #55bb40; color: #1f2937; border: none; border-radius: 0.375rem; cursor: pointer; }
+    .search-group button:hover { background-color: #35a71e; }
+  </style>
+</head>
+<body class="flex text-white">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-900 text-white h-screen p-4 flex flex-col">
+    <div class="text-2xl font-bold mb-8">Stocker</div>
+    <nav class="flex flex-col gap-4">
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition">
+        <i class="fas fa-box"></i>
+        <span>Portfolio</span>
+      </a>
+      <a href="../watchlist/index.html" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition">
+        <i class="fas fa-user"></i>
+        <span>Watchlist</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+    <div class="mt-auto">
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-red-600 transition">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col h-screen overflow-hidden">
+    
+    <!-- Header -->
+    <header class="bg-zinc-800 shadow-md px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+      <h2 class="text-xl font-semibold">Dashboard</h2>
+      <div class="flex items-center gap-4">
+        <span class="text-white">Hello, User</span>
+        <img src="https://i.pravatar.cc/40" alt="Avatar" class="w-10 h-10 rounded-full">
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="flex-1 overflow-y-auto p-6 bg-zinc-700">
+      <div class="flex flex-row justify-between">
+        <h1 class="text-2xl font-bold mb-4 inline">Welcome</h1>
+        <div class="search-group mt-2 flex gap-2">
+            <input id="searchInput" type="text" placeholder="Search stocks..." />
+            <button id="searchButton" onclick="fetchStockData()">Search</button>
+        </div>
+    </div>
+
+      <div id="stock-card-container" class="mt-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Example card (repeat or generate dynamically) -->
+        <!-- You can copy this block to make 12 cards
+        <div class="bg-gray-600 rounded-xl shadow p-6 hover:shadow-lg transition grid grid-flow-row grid-cols-2">
+          <h1 class="font-semibold inline text-lg">App</h1>
+          <button class="bg-green-600 rounded-lg px-1 w-auto"
+          onclick="window.open('../stockdetails/index.html')"
+          >+23.11%</button>
+          <span class="text-sm font-thin mb-2">Apple inc</span>
+          <span class="text-sm font-semibold mb-2 text-right">40,123.54</span>
+        </div>
+        
+        <div class="bg-gray-600 rounded-xl shadow p-6 hover:shadow-lg transition grid grid-flow-row grid-cols-2">
+          <h1 class="font-semibold inline text-lg">Sam</h1>
+          <button class="bg-green-600 rounded-lg px-1 w-auto">+12.11%</button>
+          <span class="text-sm font-thin mb-2">Samsung inc</span>
+          <span class="text-sm font-semibold mb-2 text-right">78,123.54</span>
+        </div>
+
+        <div class="bg-gray-600 rounded-xl shadow p-6 hover:shadow-lg transition grid grid-flow-row grid-cols-2">
+          <h1 class="font-semibold inline text-lg">Lom</h1>
+          <button class="bg-green-600 rounded-lg px-1 w-auto">+7.11%</button>
+          <span class="text-sm font-thin mb-2">Lomato cgm</span>
+          <span class="text-sm font-semibold mb-2 text-right">4000.14</span>
+        </div>
+
+        <div class="bg-gray-600 rounded-xl shadow p-6 hover:shadow-lg transition grid grid-flow-row grid-cols-2">
+          <h1 class="font-semibold inline text-lg">App</h1>
+          <button class="bg-green-600 rounded-lg px-1 w-auto">+23.11%</button>
+          <span class="text-sm font-thin mb-2">Apple inc</span>
+          <span class="text-sm font-semibold mb-2 text-right">40,123.54</span>
+        </div>
+        
+        <div class="bg-gray-600 rounded-xl shadow p-6 hover:shadow-lg transition grid grid-flow-row grid-cols-2">
+          <h1 class="font-semibold inline text-lg">Sam</h1>
+          <button class="bg-green-600 rounded-lg px-1 w-auto">+12.11%</button>
+          <span class="text-sm font-thin mb-2">Samsung inc</span>
+          <span class="text-sm font-semibold mb-2 text-right">78,123.54</span>
+        </div>
+
+        <div class="bg-gray-600 rounded-xl shadow p-6 hover:shadow-lg transition grid grid-flow-row grid-cols-2">
+          <h1 class="font-semibold inline text-lg">Lom</h1>
+          <button class="bg-green-600 rounded-lg px-1 w-auto">+7.11%</button>
+          <span class="text-sm font-thin mb-2">Lomato cgm</span>
+          <span class="text-sm font-semibold mb-2 text-right">4000.14</span>
+        </div>
+
+        <div class="bg-gray-600 rounded-xl shadow p-6 hover:shadow-lg transition grid grid-flow-row grid-cols-2">
+          <h1 class="font-semibold inline text-lg">App</h1>
+          <button class="bg-green-600 rounded-lg px-1 w-auto">+23.11%</button>
+          <span class="text-sm font-thin mb-2">Apple inc</span>
+          <span class="text-sm font-semibold mb-2 text-right">40,123.54</span>
+        </div>
+        
+        <div class="bg-gray-600 rounded-xl shadow p-6 hover:shadow-lg transition grid grid-flow-row grid-cols-2">
+          <h1 class="font-semibold inline text-lg">Sam</h1>
+          <button class="bg-green-600 rounded-lg px-1 w-auto">+12.11%</button>
+          <span class="text-sm font-thin mb-2">Samsung inc</span>
+          <span class="text-sm font-semibold mb-2 text-right">78,123.54</span>
+        </div>
+
+        <div class="bg-gray-600 rounded-xl shadow p-6 hover:shadow-lg transition grid grid-flow-row grid-cols-2">
+          <h1 class="font-semibold inline text-lg">Lom</h1>
+          <button class="bg-green-600 rounded-lg px-1 w-auto">+7.11%</button>
+          <span class="text-sm font-thin mb-2">Lomato cgm</span>
+          <span class="text-sm font-semibold mb-2 text-right">4000.14</span>
+        </div> -->
+    </main>
+  </div>
+
+
+  <!-- Stock Info Card -->
+  <div id="stockCard" class="bg-white hidden rounded-2xl shadow-lg p-6 space-y-2 z-40 absolute">
+    <!-- Close Button -->
+    <div class="flex justify-end">
+      <button onclick="closeCard()" class="text-gray-400 hover:text-red-500 text-xl font-bold focus:outline-none">
+        &times;
+      </button>
+    </div>
+
+    <h3 class="text-2xl font-bold text-gray-800" id="stockName"></h3>
+    <p class="text-gray-600" id="stockSymbol"></p>
+    <p>Exchange: <span class="font-medium text-gray-700" id="stockExchange"></span></p>
+    <p>Open: <span class="font-medium text-gray-700" id="stockOpen"></span></p>
+    <p>Close: <span class="font-medium text-gray-700" id="stockClose"></span></p>
+    <p>
+      Percent Change:
+      <span id="stockChange" class="font-semibold"></span>
+    </p>
+  </div>
+</div>
+
+
+
+
+<script> 
+  const samplesymbols = JSON.parse(localStorage.getItem('watchlist')) || ['AAPL','MSFT','AMZN','INTC','TSLA','TCS','NVDA','META','MCD'];
+  // localStorage.setItem('watchlist', JSON.stringify(samplesymbols));
+   const apiKey = '076916342cb1457fb6e63abec88f4f93'; //'c078a032d5114419b152ee29e7867dcd'; //'9d8ae82fd7f8406f89fc64d7cd746fd1';     // Replace with your Twelve Data API key
+
+   let stockContainer = document.getElementById('stock-card-container');
+   samplesymbols.forEach(symbol=>{
+    // console.log(symbol);
+    generatesamplestocks(symbol);
+   })
+
+
+async function generatesamplestocks(symbol) {
+  if (!symbol) return;
+
+  const url = `https://api.twelvedata.com/quote?symbol=${symbol}&apikey=${apiKey}`;
+  try {
+    const res = await fetch(url);              // wait for response
+    const data = await res.json();             // wait for JSON parsing
+
+    if (data) {
+      console.log(`Current price of ${symbol}: $${data.close}`);
+      stockContainer.innerHTML+=`
+      <div class="bg-gray-600 rounded-xl shadow p-6 hover:shadow-lg transition grid grid-flow-row grid-cols-2">
+          <h1 class="font-semibold inline text-lg">${data.symbol}</h1>
+          <button class="bg-green-600 rounded-lg px-1 w-auto" >${data.percent_change}</button>
+          <span class="text-sm font-thin mb-2">${data.name}</span>
+          <span class="text-sm font-semibold mb-2 text-right">${data.close}</span>
+        </div>
+    `                            // ✅ return the actual data
+    } else {
+      console.log(`Error: ${data.message || 'Invalid symbol'}`);
+      return null;
+    }
+  } catch (err) {
+    console.log('Failed to fetch stock price.');
+    console.error(err);
+    return null;
+  }
+}
+
+
+async function fetchStockData() {
+      const symbol = document.getElementById("searchInput").value.toUpperCase();
+      if (!symbol) return;
+
+      const url = `https://api.twelvedata.com/quote?symbol=${symbol}&apikey=${apiKey}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (!data || data.status === 'error' || !data.symbol) {
+          alert("Invalid symbol or error fetching data.");
+          return;
+        }
+
+        // Populate card
+        document.getElementById("stockCard").classList.remove("hidden");
+        document.getElementById("stockName").textContent = data.name;
+        document.getElementById("stockSymbol").textContent = `Symbol: ${data.symbol}`;
+        document.getElementById("stockExchange").textContent = data.exchange;
+        document.getElementById("stockOpen").textContent = `$${data.open}`;
+        document.getElementById("stockClose").textContent = `$${data.close}`;
+
+        const changeElem = document.getElementById("stockChange");
+        changeElem.textContent = `${data.percent_change}%`;
+        changeElem.className = parseFloat(data.percent_change) >= 0
+          ? "text-green-600 font-semibold"
+          : "text-red-600 font-semibold";
+
+      } catch (error) {
+        console.error(error);
+        alert("Failed to fetch stock data.");
+      }
+    }
+
+    function closeCard() {
+      document.getElementById("stockCard").classList.add("hidden");
+    }
+</script>
+</body>
+</html>

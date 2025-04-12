@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="output.css" />
+  <title>Watchlist - Stocker</title>
+  <!-- Optionally load Font Awesome icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTTXRMz0+X6fJZoS6UzhO6cJ8CQ0XNHxCv7B0D/5DmbpXaT9fdJjwKyXKdZ3qY9SbnNiMyHzAg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body class="flex text-white bg-gray-900">
+
+   <!-- Sidebar -->
+   <aside class="w-64 bg-gray-900 text-white h-screen p-4 flex flex-col">
+    <div class="text-2xl font-bold mb-8">Stocker</div>
+    <nav class="flex flex-col gap-4">
+      <a href="../Homepage/index.html" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition">
+        <i class="fas fa-box"></i>
+        <span>Portfolio</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition">
+        <i class="fas fa-user"></i>
+        <span>Watchlist</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+    <div class="mt-auto">
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-red-600 transition">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </aside>
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col h-screen overflow-hidden">
+    
+    <!-- Header -->
+    <header class="bg-zinc-800 shadow p-6 flex justify-between items-center">
+      <h1 class="text-2xl font-semibold">Watchlist</h1>
+      <div class="flex items-center gap-4">
+        <span>Hello, User</span>
+        <img src="https://i.pravatar.cc/40" alt="Avatar" class="w-10 h-10 rounded-full">
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="max-w-6xl mx-auto">
+      <!-- Stock Card -->
+      <div id="stockCard" class="relative bg-white shadow-md rounded-2xl p-6 mb-6 w-full">
+        <!-- Close Button -->
+        <button onclick="removeCard()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+  
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-gray-800" id="stockName">Stock Name</h2>
+            <p class="text-gray-500 text-sm" id="stockSymbol">Symbol: AAPL</p>
+            <p class="text-gray-500 text-sm" id="stockExchange">Exchange: NASDAQ</p>
+            <p>Percent Change: 
+              <span id="stockChange" class="font-semibold text-green-600">+1.18%</span>
+            </p>
+            <p>Volume: <span class="font-medium" id="stockVolume">84,930,000</span></p>
+          </div>
+          <div>
+            <p style="text-align: right; padding-right: 20px;">Open: <span class="font-medium" id="stockOpen">$173.25</span></p>
+            <p style="text-align: right; padding-right: 20px;">Close: <span class="font-medium" id="stockClose">$175.30</span></p>
+            <br>
+            <p style="text-align: right; padding-right: 20px;">High: <span class="font-medium" id="stockHigh">$176.10</span></p>
+            <p style="text-align: right; padding-right: 20px;">Low: <span class="font-medium" id="stockLow">$172.80</span></p>
+          </div>
+        </div>
+      </div>
+
+      
+    </div>
+  </div>
+    <script>
+      function removeCard() {
+        document.getElementById("stockCard").remove();
+      }
+  
+      let watchlist = ['']
+
+      // Example of populating the card dynamically (replace with real data in production)
+      const exampleData = {
+        name: "Apple Inc.",
+        symbol: "AAPL",
+        exchange: "NASDAQ",
+        open: "173.25",
+        close: "175.30",
+        high: "176.10",
+        low: "172.80",
+        percent_change: "1.18",
+        volume: "84930000"
+      };
+  
+      document.getElementById("stockName").textContent = exampleData.name;
+      document.getElementById("stockSymbol").textContent = `Symbol: ${exampleData.symbol}`;
+      document.getElementById("stockExchange").textContent = `Exchange: ${exampleData.exchange}`;
+      document.getElementById("stockOpen").textContent = `$${exampleData.open}`;
+      document.getElementById("stockClose").textContent = `$${exampleData.close}`;
+      document.getElementById("stockHigh").textContent = `$${exampleData.high}`;
+      document.getElementById("stockLow").textContent = `$${exampleData.low}`;
+      document.getElementById("stockChange").textContent = `${exampleData.percent_change}%`;
+      document.getElementById("stockChange").className = `font-semibold ${
+        parseFloat(exampleData.percent_change) >= 0 ? "text-green-600" : "text-red-600"
+      }`;
+      document.getElementById("stockVolume").textContent = parseInt(exampleData.volume).toLocaleString();
+      const changeElem = document.getElementById("stockChange");
+        changeElem.textContent = `${data.percent_change}%`;
+        changeElem.className = parseFloat(data.percent_change) >= 0
+          ? "text-green-600 font-semibold"
+          : "text-red-600 font-semibold";
+    </script>
+  
+  </body>
+  </html>

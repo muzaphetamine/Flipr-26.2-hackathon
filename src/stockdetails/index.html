@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="output.css" />
+  <title>Stocker</title>
+  <!-- Load Chart.js from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="flex text-white">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-900 text-white h-screen p-4 flex flex-col">
+    <div class="text-2xl font-bold mb-8">Stocker</div>
+    <nav class="flex flex-col gap-4">
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition">
+        <i class="fas fa-box"></i>
+        <span>Portfolio</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition">
+        <i class="fas fa-user"></i>
+        <span>Watchlist</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+    <div class="mt-auto">
+      <a href="#" class="flex items-center gap-3 p-2 rounded hover:bg-red-600 transition">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col h-screen overflow-hidden">
+    <!-- Header -->
+    <header class="bg-zinc-800 shadow-md px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+      <h2 class="text-xl font-semibold">Watch Stock</h2>
+      <div class="flex items-center gap-4">
+        <span class="text-white">Hello, User</span>
+        <img src="https://i.pravatar.cc/40" alt="Avatar" class="w-10 h-10 rounded-full">
+      </div>
+    </header>
+    <!-- Page Content -->
+    <main class="flex-1 overflow-y-auto p-6 bg-zinc-700">
+      
+      <!-- Stock Information Section -->
+      <div class="text-white">
+        <div id="stock-info-placeholder" class="rounded-xl shadow p-6 grid grid-cols-2">
+          <!-- Stock Info will be updated via JavaScript -->
+          <h3 class="text-lg font-semibold mb-2">Stock Info Placeholder</h3>
+          <p class="text-center">
+            Detailed stock information will be displayed here.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Chart Section -->
+      <div class="mb-6">
+        <!-- Black container for the chart -->
+        <div class="bg-black rounded-xl shadow p-6">
+          <!-- Canvas element for Chart.js -->
+          <canvas id="myChart" class="h-40"></canvas>
+        </div>
+      </div>
+      
+      
+      
+    </main>
+  </div>
+
+  <!-- Script to initialize the chart and update stock info -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initialize Chart.js
+      const ctx = document.getElementById('myChart').getContext('2d');
+
+      // Create a gradient for the area under the line
+      const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+      gradient.addColorStop(0, 'rgba(0, 255, 0, 0.77)');  // Light blue with opacity
+      gradient.addColorStop(1, 'rgba(66,153,225,0)');      // Fades to transparent
+      
+      // Sample chart data representing a trading day
+      const labels = [
+        "09:30", "10:00", "10:30", "11:00", "11:30", 
+        "12:00", "12:30", "13:00", "13:30", "14:00", 
+        "14:30", "15:00", "15:30", "16:00"
+      ];
+      const dataPoints = [102.5, 103.1, 102.8, 104.0, 103.5, 104.2, 104.8, 105.2, 104.9, 105.5, 105.2, 105.8, 106.0, 106.5];
+      
+      // Create the line chart
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Stock Price',
+            data: dataPoints,
+            fill: true,
+            backgroundColor: gradient,
+            borderColor: '#008000', // green line
+            borderWidth: 2,
+            tension: 0.4, // Smooth curves
+            pointRadius: 0 // Hide individual points
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              callbacks: {
+                label: (context) => `Price: ₹${context.parsed.y.toFixed(2)}`
+              }
+            }
+          },
+          scales: {
+            x: {
+              display: true,
+              grid: { display: false },
+              ticks: { color: "#CBD5E0" }
+            },
+            y: {
+              display: true,
+              grid: { color: "rgba(255,255,255,0.1)" },
+              ticks: { color: "#CBD5E0" },
+              beginAtZero: false
+            }
+          }
+        }
+      });
+      
+      // Update Stock Info Section with sample data
+      const stockInfoPlaceholder = document.getElementById('stock-info-placeholder');
+      
+      // Use the latest data point from the chart (for demonstration)
+      const latestPrice = dataPoints[dataPoints.length - 1].toFixed(2);
+      const lastUpdatedTime = labels[labels.length - 1];
+      
+      // Build the HTML content for the stock info
+      const stockInfoHTML = `
+        <h3 class="text-lg font-semibold mb-2">Apple Inc.</h3>
+        <p class="text-right px-3"><strong>Exchange:</strong> NASDAQ</p>
+        <p><strong>Ticker:</strong> AAPL</p>
+        <span><span>
+        <p class="text-right px-3"><strong>Latest Price:</strong> $${latestPrice}</p>
+        <p class="text-right px-3"><strong>Last Updated:</strong> ${lastUpdatedTime}</p>
+      `;
+      
+      // Update the placeholder with the stock info
+      stockInfoPlaceholder.innerHTML = stockInfoHTML;
+    });
+  </script>
+</body>
+</html>

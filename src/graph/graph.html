@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock Details - AAPL (Apple Inc.)</title>
+  <!-- Chart.js from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+    }
+    #chartContainer {
+      width: 80%;
+      margin: 30px auto;
+    }
+    #addWatchlist, #showOtherGraph {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: #68d391;
+      border: none;
+      color: #1f2937;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    #addWatchlist:hover, #showOtherGraph:hover {
+      background: #4fd1c5;
+    }
+    .navigation {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .navigation a {
+      text-decoration: none;
+      color: #68d391;
+      font-weight: bold;
+    }
+    .other-company-section {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .other-company-section input {
+      padding: 8px;
+      width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Stock Details for AAPL (Apple Inc.)</h1>
+
+  <!-- Chart Container -->
+  <div id="chartContainer">
+    <canvas id="lineChart"></canvas>
+  </div>
+
+  <!-- "Add to Watchlist" Button -->
+  <button id="addWatchlist">⭐ Add to Watchlist</button>
+  
+  <!-- Section to show other company graphs -->
+  <div class="other-company-section">
+    <label for="chartCompanySymbol">Other Company Symbol:</label>
+    <input type="text" id="chartCompanySymbol" placeholder="e.g., MSFT">
+    <button id="showOtherGraph">Show Graph</button>
+  </div>
+
+  <!-- Link to Watchlist Page -->
+  <div class="navigation">
+    <a href="watchlist.html">Go to Watchlist</a>
+  </div>
+
+  <script>
+    /* ----- Configuration ----- */
+    const USE_API = false; // Flag to use remote API for "Add to Watchlist"
+    const WATCHLIST_API_URL = 'http://localhost:3000/api/watchlist'; // API endpoint if using API
+
+    /* ----- Sample Data: Dates & Prices for Demo ----- */
+    // Base dates used for all companies.
+    const sampleDates = [
+      "2023-09-25",
+      "2023-09-26",
+      "2023-09-27",
+      "2023-09-28",
+      "2023-09-29",
+      "2023-09-30",
+      "2023-10-01"
+    ];
+    
+    // Simulated historical data for multiple companies.
+    const sampleData = {
+      // Base companies:
+      "AAPL": [150, 152, 149, 153, 155, 154, 156],
+      "MSFT": [210, 212, 208, 215, 218, 217, 220],
+      "GOOGL": [100, 102, 101, 103, 105, 104, 106],
+      "AMZN": [3200, 3220, 3180, 3250, 3270, 3260, 3280],
+      "TSLA": [700, 710, 705, 715, 720, 730, 740],
+      "META": [250, 252, 248, 255, 260, 258, 262],
+      "NFLX": [500, 505, 495, 510, 515, 520, 525],
+      "IBM": [140, 142, 139, 143, 145, 144, 146],
+      "RELIANCE": [2000, 2020, 2010, 2030, 2040, 2035, 2045],
+      "ADBE": [480, 482, 478, 485, 487, 486, 490],
+      "AMD": [90, 92, 89, 93, 95, 94, 96],
+      "ORCL": [80, 82, 79, 83, 85, 84, 86],
+      "CSCO": [50, 52, 49, 53, 55, 54, 56],
+      "INTC": [60, 62, 59, 63, 65, 64, 66],
+      "NVDA": [300, 305, 295, 310, 315, 312, 318],
+      "PYPL": [70, 72, 68, 73, 75, 74, 76],
+      "CRM": [200, 202, 199, 203, 205, 204, 207],
+      "TWTR": [40, 42, 39, 43, 45, 44, 46],
+      "SQ": [250, 252, 248, 255, 258, 257, 260],
+      "BABA": [220, 222, 219, 224, 225, 223, 226],
+      "UBER": [45, 46, 44, 47, 48, 47, 49],
+      "LYFT": [55, 56, 54, 57, 58, 57, 59],
+      "ZM": [85, 87, 84, 88, 90, 89, 91],
+      "SHOP": [1100, 1110, 1095, 1120, 1130, 1115, 1140],
+      "SNAP": [30, 31, 29, 32, 33, 32, 34],
+      "ADP": [170, 172, 169, 174, 175, 174, 177],
+      "CSX": [70, 71, 69, 72, 73, 72, 74],
+      "F": [15, 15.5, 15, 16, 16.2, 16, 16.5],
+      "GM": [50, 51, 49, 52, 53, 52, 54],
+      "NKE": [140, 142, 138, 145, 147, 146, 148],
+      "SBUX": [100, 102, 99, 104, 105, 103, 106],
+      "DIS": [95, 97, 94, 98, 100, 99, 101],
+      "KO": [60, 61, 59, 62, 63, 62, 64],
+      "PFE": [40, 41, 39, 42, 43, 42, 44],
+      "MRK": [80, 81, 79, 83, 84, 83, 85],
+      "V": [220, 222, 218, 225, 227, 226, 230],
+      "MA": [350, 355, 345, 360, 362, 360, 365],
+      "WMT": [140, 142, 138, 145, 147, 146, 149],
+      "CVX": [100, 102, 99, 103, 105, 104, 107],
+      // 30 additional companies:
+      "BAC": [35, 36, 35, 37, 38, 37, 39],
+      "JPM": [150, 152, 151, 153, 155, 154, 156],
+      "C": [60, 61, 59, 62, 63, 62, 64],
+      "WFC": [45, 46, 44, 47, 48, 47, 49],
+      "GS": [250, 252, 248, 255, 260, 258, 262],
+      "MS": [80, 82, 79, 83, 85, 84, 86],
+      "UNH": [400, 405, 395, 410, 415, 412, 418],
+      "JNJ": [160, 162, 158, 165, 167, 166, 169],
+      "MRNA": [150, 152, 149, 153, 155, 154, 157],
+      "CVS": [80, 81, 79, 83, 84, 83, 85],
+      "T": [28, 29, 27, 30, 31, 30, 32],
+      "VZ": [55, 56, 54, 57, 58, 57, 59],
+      "PEP": [150, 152, 149, 153, 155, 154, 156],
+      "ABT": [110, 112, 109, 115, 117, 116, 118],
+      "ABBV": [120, 122, 119, 124, 125, 123, 127],
+      "TMO": [500, 505, 495, 510, 515, 512, 518],
+      "LLY": [220, 222, 218, 225, 227, 226, 230],
+      "BMY": [60, 62, 59, 63, 65, 64, 66],
+      "AMGN": [230, 232, 228, 235, 237, 236, 240],
+      "MDT": [110, 111, 109, 112, 113, 112, 114],
+      "SNY": [50, 51, 49, 52, 53, 52, 54],
+      "GILD": [70, 72, 68, 73, 75, 74, 76],
+      "LOW": [220, 222, 218, 225, 227, 226, 230],
+      "HD": [300, 305, 295, 310, 315, 312, 318],
+      "DG": [190, 192, 188, 195, 197, 196, 200],
+      "TGT": [150, 152, 148, 155, 157, 156, 160],
+      "COST": [400, 405, 395, 410, 415, 412, 418],
+      "CAT": [250, 252, 249, 255, 257, 256, 260],
+      "BA": [180, 182, 179, 185, 187, 186, 190],
+      "LMT": [350, 352, 348, 355, 357, 356, 360],
+      // Adding Deloitte (simulated data)
+      "DELOITTE": [500, 505, 498, 510, 515, 512, 518]
+    };
+
+    /* ----- Build Initial Line Chart Using Chart.js (Line Chart) ----- */
+    const ctx = document.getElementById("lineChart").getContext("2d");
+    // Create a line chart showing the default AAPL data.
+    const lineChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: sampleDates,
+        datasets: [{
+          label: "Price (in USD) - AAPL",
+          data: sampleData["AAPL"],
+          borderColor: "#68d391",
+          backgroundColor: "rgba(104, 211, 145, 0.2)",
+          fill: true,
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { 
+            display: true,
+            title: { display: true, text: "Date" }
+          },
+          y: { 
+            display: true,
+            title: { display: true, text: "Price (USD)" }
+          }
+        }
+      }
+    });
+
+    /* ----- "Add to Watchlist" Functionality ----- */
+    document.getElementById("addWatchlist").addEventListener("click", () => {
+      // Define the stock object – in a real app, these values would update dynamically.
+      const stock = { symbol: "AAPL", name: "Apple Inc." };
+
+      if (USE_API) {
+        // Post to the API endpoint if configured.
+        fetch(WATCHLIST_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(stock)
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert(`${stock.symbol} has been added via API!`);
+        })
+        .catch(err => {
+          console.error(err);
+          alert("Error adding stock via API; using localStorage fallback.");
+          addToLocalStorage(stock);
+        });
+      } else {
+        addToLocalStorage(stock);
+      }
+    });
+
+    // LocalStorage fallback to add a stock.
+    function addToLocalStorage(stock) {
+      let watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
+      if (!watchlist.some(s => s.symbol === stock.symbol)) {
+        watchlist.push(stock);
+        localStorage.setItem("watchlist", JSON.stringify(watchlist));
+        alert(`${stock.symbol} has been added to your watchlist!`);
+      } else {
+        alert(`${stock.symbol} is already in your watchlist.`);
+      }
+    }
+
+    /* ----- "Show Other Company Graphs" Functionality ----- */
+    document.getElementById("showOtherGraph").addEventListener("click", () => {
+      const otherSymbol = document.getElementById("chartCompanySymbol").value.trim().toUpperCase();
+      if (!otherSymbol) {
+        alert("Please enter a company symbol.");
+        return;
+      }
+      // Check if sample data exists for the entered symbol.
+      if (!sampleData[otherSymbol]) {
+        alert(`Data for ${otherSymbol} is not available. Try one of: ${Object.keys(sampleData).join(", ")}`);
+        return;
+      }
+      // Update the chart’s dataset and label.
+      lineChart.data.datasets[0].data = sampleData[otherSymbol];
+      lineChart.data.datasets[0].label = `Price (in USD) - ${otherSymbol}`;
+      lineChart.update();
+      // Optionally update the page title to reflect the new company.
+      document.querySelector('h1').textContent = `Stock Details for ${otherSymbol}`;
+    });
+  </script>
+</body>
+</html>
